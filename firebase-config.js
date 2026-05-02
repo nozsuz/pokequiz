@@ -1,16 +1,13 @@
-// オンラインで共有するランキングを使う場合は、Firebase コンソールで取得した
-// 設定値を下記に入れてください（apiKey が空のままなら localStorage に
-// 保存される、ブラウザごとのローカルランキングになります）。
-//
-// 1. https://console.firebase.google.com/ でプロジェクトを作成
-// 2. Firestore Database を有効化（テストモードで開始可）
-// 3. プロジェクト設定 → 「アプリを追加」→ ウェブアプリ
-// 4. 表示された firebaseConfig の値をここにコピー
+// Firebase 設定値（pokemonquiz プロジェクト）
+// Web の apiKey は公開されても問題ない値です（機密ではない）。
+// 実際のアクセス制御は Firestore セキュリティルールで行います。
+// 詳細は README.md を参照。
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyAP_jl1E3NWXoOiBO5J-zfuDjSqBw_NI28",
+  authDomain: "pokemonquiz-885d9.firebaseapp.com",
+  projectId: "pokemonquiz-885d9",
+  storageBucket: "pokemonquiz-885d9.firebasestorage.app",
+  messagingSenderId: "433031447439",
+  appId: "1:433031447439:web:2088d197d16f3fe0dc81fa",
+  measurementId: "G-55CRK2KVWX"
 };
