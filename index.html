@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ポケモンクイズ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { min-height: 100%; }
+  body {
+    font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+    background: linear-gradient(135deg, #ffe066 0%, #ff8787 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px;
+  }
+  .container {
+    background: white;
+    border-radius: 24px;
+    padding: 24px 22px;
+    max-width: 640px;
+    width: 100%;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    text-align: center;
+  }
+  h1 {
+    color: #e63946;
+    font-size: 1.9em;
+    margin-bottom: 12px;
+    text-shadow: 3px 3px 0 #ffe066;
+  }
+  .lead { font-size: 1.1em; color: #444; margin: 12px 0; }
+
+  /* Filter section */
+  .filter-section { margin: 18px 0; text-align: left; }
+  .filter-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 1.05em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .filter-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .pill {
+    background: white;
+    color: #555;
+    border: 2px solid #ddd;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.1s, border-color 0.15s, background 0.15s;
+  }
+  .pill:hover { border-color: #4dabf7; }
+  .pill:active { transform: scale(0.96); }
+  .pill.active {
+    background: #4dabf7;
+    color: white;
+    border-color: #4dabf7;
+  }
+  .pill.all-pill.active {
+    background: #495057;
+    border-color: #495057;
+  }
+
+  /* Quiz */
+  .progress {
+    color: #555;
+    margin-bottom: 14px;
+    font-size: 1.05em;
+    font-weight: bold;
+  }
+  .pokemon-image-wrap {
+    width: 260px;
+    height: 260px;
+    margin: 0 auto 18px;
+    background: radial-gradient(circle, #e7f5ff 0%, #d0ebff 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 6px solid #ffe066;
+  }
+  .pokemon-image {
+    max-width: 88%;
+    max-height: 88%;
+    transition: filter 0.4s;
+  }
+  .silhouette { filter: brightness(0); }
+  .choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .choice {
+    background: #4dabf7;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 16px 8px;
+    font-size: 1.15em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    font-family: inherit;
+    box-shadow: 0 4px 0 #1c7ed6;
+    min-height: 60px;
+  }
+  .choice:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 #1c7ed6; }
+  .choice:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #1c7ed6; }
+  .choice.correct {
+    background: #51cf66; box-shadow: 0 4px 0 #2f9e44;
+    animation: bounce 0.5s;
+  }
+  .choice.wrong { background: #ff6b6b; box-shadow: 0 4px 0 #c92a2a; }
+  .choice:disabled { cursor: not-allowed; opacity: 0.85; }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .feedback {
+    font-size: 1.35em;
+    font-weight: bold;
+    margin: 14px 0;
+    min-height: 1.5em;
+    color: #333;
+  }
+  .feedback.correct { color: #2f9e44; }
+  .feedback.wrong { color: #c92a2a; }
+  .next-btn, .start-btn, .secondary-btn {
+    background: #ffd43b;
+    color: #333;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 32px;
+    font-size: 1.15em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #f59f00;
+    font-family: inherit;
+    transition: transform 0.15s, box-shadow 0.15s;
+    margin: 4px;
+  }
+  .start-btn { padding: 16px 40px; font-size: 1.25em; }
+  .next-btn:hover, .start-btn:hover, .secondary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #f59f00;
+  }
+  .secondary-btn {
+    background: white;
+    color: #495057;
+    box-shadow: 0 4px 0 #adb5bd;
+    border: 2px solid #adb5bd;
+  }
+  .secondary-btn:hover { box-shadow: 0 6px 0 #adb5bd; }
+  .loading { font-size: 1.3em; color: #666; padding: 40px 0; }
+  .score-big { font-size: 1.8em; color: #e63946; margin: 16px 0; font-weight: bold; }
+  .stars { font-size: 2.2em; color: #ffd43b; margin: 10px 0; letter-spacing: 6px; }
+  .summary { color: #666; margin: 8px 0; font-size: 0.95em; }
+  @media (max-width: 480px) {
+    h1 { font-size: 1.5em; }
+    .pokemon-image-wrap { width: 220px; height: 220px; }
+    .choice { font-size: 1em; padding: 14px 4px; }
+    .pill { font-size: 0.85em; padding: 6px 11px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>ポケモンクイズ</h1>
+  <div id="content"></div>
+</div>
+
+<script>
+const TOTAL_QUESTIONS = 10;
+const POOL_SIZE = 20;
+const MAX_POKEMON_ID = 1025;
+
+const GENERATIONS = [
+  { id: 1, name: 'だい1せだい・カントー', range: [1, 151] },
+  { id: 2, name: 'だい2せだい・ジョウト', range: [152, 251] },
+  { id: 3, name: 'だい3せだい・ホウエン', range: [252, 386] },
+  { id: 4, name: 'だい4せだい・シンオウ', range: [387, 493] },
+  { id: 5, name: 'だい5せだい・イッシュ', range: [494, 649] },
+  { id: 6, name: 'だい6せだい・カロス', range: [650, 721] },
+  { id: 7, name: 'だい7せだい・アローラ', range: [722, 809] },
+  { id: 8, name: 'だい8せだい・ガラル', range: [810, 905] },
+  { id: 9, name: 'だい9せだい・パルデア', range: [906, 1025] }
+];
+
+const TYPES = [
+  { id: 'normal',   name: 'ノーマル',   color: '#A8A878' },
+  { id: 'fire',     name: 'ほのお',     color: '#F08030' },
+  { id: 'water',    name: 'みず',       color: '#6890F0' },
+  { id: 'electric', name: 'でんき',     color: '#F8D030' },
+  { id: 'grass',    name: 'くさ',       color: '#78C850' },
+  { id: 'ice',      name: 'こおり',     color: '#98D8D8' },
+  { id: 'fighting', name: 'かくとう',   color: '#C03028' },
+  { id: 'poison',   name: 'どく',       color: '#A040A0' },
+  { id: 'ground',   name: 'じめん',     color: '#E0C068' },
+  { id: 'flying',   name: 'ひこう',     color: '#A890F0' },
+  { id: 'psychic',  name: 'エスパー',   color: '#F85888' },
+  { id: 'bug',      name: 'むし',       color: '#A8B820' },
+  { id: 'rock',     name: 'いわ',       color: '#B8A038' },
+  { id: 'ghost',    name: 'ゴースト',   color: '#705898' },
+  { id: 'dragon',   name: 'ドラゴン',   color: '#7038F8' },
+  { id: 'dark',     name: 'あく',       color: '#705848' },
+  { id: 'steel',    name: 'はがね',     color: '#B8B8D0' },
+  { id: 'fairy',    name: 'フェアリー', color: '#EE99AC' }
+];
+
+const typeIdCache = new Map();
+
+let selectedGens = new Set();   // empty = all
+let selectedTypes = new Set();  // empty = all
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+
+const content = document.getElementById('content');
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function showSettings() {
+  const allGensActive = selectedGens.size === 0;
+  const allTypesActive = selectedTypes.size === 0;
+
+  const typePillStyle = (t) => selectedTypes.has(t.id)
+    ? `background:${t.color};color:white;border-color:${t.color};`
+    : '';
+
+  content.innerHTML = `
+    <p class="lead">かげで うつる ポケモンの<br>なまえを あてよう！</p>
+
+    <div class="filter-section">
+      <div class="filter-title">📍 せだい・ちほう</div>
+      <div class="filter-pills">
+        <button class="pill all-pill ${allGensActive ? 'active' : ''}" onclick="clearGens()">ぜんぶ</button>
+        ${GENERATIONS.map(g => `
+          <button class="pill ${selectedGens.has(g.id) ? 'active' : ''}" onclick="toggleGen(${g.id})">${g.name}</button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">⚡ タイプ</div>
+      <div class="filter-pills">
+        <button class="pill all-pill ${allTypesActive ? 'active' : ''}" onclick="clearTypes()">ぜんぶ</button>
+        ${TYPES.map(t => `
+          <button class="pill ${selectedTypes.has(t.id) ? 'active' : ''}" style="${typePillStyle(t)}" onclick="toggleType('${t.id}')">${t.name}</button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="summary">${describeSelection()}</div>
+    <button class="start-btn" onclick="startQuiz()">スタート！</button>
+  `;
+}
+
+function describeSelection() {
+  const gen = selectedGens.size === 0 ? 'すべての せだい' : `${selectedGens.size}つの せだい`;
+  const typ = selectedTypes.size === 0 ? 'すべての タイプ' : `${selectedTypes.size}つの タイプ`;
+  return `たいしょう: ${gen} × ${typ}`;
+}
+
+function toggleGen(id) {
+  if (selectedGens.has(id)) selectedGens.delete(id); else selectedGens.add(id);
+  showSettings();
+}
+function clearGens() { selectedGens.clear(); showSettings(); }
+function toggleType(id) {
+  if (selectedTypes.has(id)) selectedTypes.delete(id); else selectedTypes.add(id);
+  showSettings();
+}
+function clearTypes() { selectedTypes.clear(); showSettings(); }
+
+async function fetchTypePokemonIds(typeId) {
+  if (typeIdCache.has(typeId)) return typeIdCache.get(typeId);
+  const data = await fetch(`https://pokeapi.co/api/v2/type/${typeId}`).then(r => r.json());
+  const ids = data.pokemon
+    .map(p => {
+      const m = p.pokemon.url.match(/\/pokemon\/(\d+)\//);
+      return m ? parseInt(m[1], 10) : null;
+    })
+    .filter(id => id !== null && id <= MAX_POKEMON_ID);
+  typeIdCache.set(typeId, ids);
+  return ids;
+}
+
+async function buildCandidatePool() {
+  // Generation/region filter
+  let candidates;
+  if (selectedGens.size === 0) {
+    candidates = new Set();
+    for (let i = 1; i <= MAX_POKEMON_ID; i++) candidates.add(i);
+  } else {
+    candidates = new Set();
+    for (const genId of selectedGens) {
+      const gen = GENERATIONS.find(g => g.id === genId);
+      for (let i = gen.range[0]; i <= gen.range[1]; i++) candidates.add(i);
+    }
+  }
+  // Type filter (union of selected types)
+  if (selectedTypes.size > 0) {
+    const lists = await Promise.all([...selectedTypes].map(fetchTypePokemonIds));
+    const typeIds = new Set(lists.flat());
+    candidates = new Set([...candidates].filter(id => typeIds.has(id)));
+  }
+  return [...candidates];
+}
+
+async function fetchPokemon(id) {
+  const [pokemon, species] = await Promise.all([
+    fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(r => r.json()),
+    fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`).then(r => r.json())
+  ]);
+  const jaEntry = species.names.find(n => n.language.name === 'ja-Hrkt')
+              || species.names.find(n => n.language.name === 'ja');
+  const name = jaEntry ? jaEntry.name : pokemon.name;
+  const art = pokemon.sprites.other && pokemon.sprites.other['official-artwork'];
+  const image = (art && art.front_default) || pokemon.sprites.front_default;
+  return { id, name, image };
+}
+
+async function startQuiz() {
+  content.innerHTML = '<div class="loading">よみこみちゅう... ⏳</div>';
+  try {
+    const candidates = await buildCandidatePool();
+    if (candidates.length < 4) {
+      content.innerHTML = `
+        <div class="lead">えらんだ じょうけんに あう ポケモンが すくないよ。<br>べつの じょうけんを えらんでね！</div>
+        <button class="start-btn" onclick="showSettings()">せっていに もどる</button>`;
+      return;
+    }
+
+    const pickedIds = shuffle(candidates).slice(0, Math.min(POOL_SIZE, candidates.length));
+    const pool = await Promise.all(pickedIds.map(fetchPokemon));
+    const valid = pool.filter(p => p.image);
+    if (valid.length < 4) throw new Error('not enough pokemon with images');
+
+    questions = [];
+    const shuffled = shuffle(valid);
+    const n = Math.min(TOTAL_QUESTIONS, shuffled.length);
+    for (let i = 0; i < n; i++) {
+      const correct = shuffled[i];
+      const wrongs = shuffle(valid.filter(p => p.id !== correct.id)).slice(0, 3);
+      const choices = shuffle([correct, ...wrongs]);
+      questions.push({ correct, choices });
+    }
+    currentIndex = 0;
+    score = 0;
+    showQuestion();
+  } catch (e) {
+    console.error(e);
+    content.innerHTML = `
+      <div class="lead">エラーが おきました。<br>インターネットを たしかめてね。</div>
+      <button class="start-btn" onclick="showSettings()">せっていに もどる</button>`;
+  }
+}
+
+function showQuestion() {
+  const q = questions[currentIndex];
+  content.innerHTML = `
+    <div class="progress">だい ${currentIndex + 1} もん / ${questions.length} もん　★ ${score} てん</div>
+    <div class="pokemon-image-wrap">
+      <img class="pokemon-image silhouette" src="${q.correct.image}" id="poke-img" alt="?">
+    </div>
+    <div class="feedback" id="feedback">このポケモンは だれ?</div>
+    <div class="choices" id="choices">
+      ${q.choices.map(c => `
+        <button class="choice" data-id="${c.id}" onclick="answer(${c.id})">${c.name}</button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function answer(chosenId) {
+  const q = questions[currentIndex];
+  const correctId = q.correct.id;
+  const isCorrect = chosenId === correctId;
+
+  document.querySelectorAll('.choice').forEach(btn => {
+    btn.disabled = true;
+    const id = parseInt(btn.dataset.id, 10);
+    if (id === correctId) btn.classList.add('correct');
+    else if (id === chosenId) btn.classList.add('wrong');
+  });
+  document.getElementById('poke-img').classList.remove('silhouette');
+
+  const feedback = document.getElementById('feedback');
+  if (isCorrect) {
+    score++;
+    feedback.textContent = `せいかい！ ${q.correct.name} だよ！🎉`;
+    feedback.className = 'feedback correct';
+  } else {
+    feedback.textContent = `ざんねん... こたえは ${q.correct.name}`;
+    feedback.className = 'feedback wrong';
+  }
+
+  setTimeout(() => {
+    const choicesDiv = document.getElementById('choices');
+    const isLast = currentIndex + 1 >= questions.length;
+    choicesDiv.innerHTML = `
+      <button class="next-btn" style="grid-column: 1 / -1;" onclick="next()">
+        ${isLast ? 'けっかを みる →' : 'つぎの もんだい →'}
+      </button>`;
+  }, 1100);
+}
+
+function next() {
+  currentIndex++;
+  if (currentIndex < questions.length) showQuestion();
+  else showResult();
+}
+
+function showResult() {
+  const total = questions.length;
+  let message;
+  if (score === total) message = 'パーフェクト！ ポケモンマスターだ！';
+  else if (score >= total * 0.8) message = 'すごい！ よくできました！';
+  else if (score >= total * 0.5) message = 'いいね！ もっとがんばろう！';
+  else if (score >= total * 0.3) message = 'おしい！ つぎは もっといけるよ！';
+  else message = 'またチャレンジしてね！';
+
+  const filled = Math.round((score / total) * 5);
+  const stars = '★'.repeat(filled) + '☆'.repeat(5 - filled);
+
+  content.innerHTML = `
+    <div class="score-big">けっか はっぴょう！</div>
+    <div class="stars">${stars}</div>
+    <div class="score-big">${score} / ${total} てん</div>
+    <div class="feedback correct">${message}</div>
+    <div>
+      <button class="start-btn" onclick="startQuiz()">おなじ せっていで もういちど</button>
+      <button class="secondary-btn" onclick="showSettings()">せっていを かえる</button>
+    </div>
+  `;
+}
+
+showSettings();
+</script>
+</body>
+</html>
