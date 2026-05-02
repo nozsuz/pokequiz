@@ -353,12 +353,19 @@ async function initFirestore() {
 async function submitScore(entry) {
   const api = await firestoreReady;
   if (api) {
-    await api.addDoc(api.collection(api.db, 'rankings'), {
-      ...entry,
-      createdAt: api.serverTimestamp()
-    });
+    const existing = await api.getDocs(api.query(
+      api.collection(api.db, 'rankings'),
+      api.where('name', '==', entry.name),
+      api.limit(1)
+    ));
+    const data = { ...entry, createdAt: api.serverTimestamp() };
+    if (existing.empty) {
+      await api.addDoc(api.collection(api.db, 'rankings'), data);
+    } else {
+      await api.updateDoc(existing.docs[0].ref, data);
+    }
   } else {
-    const all = readLocalRankings();
+    const all = readLocalRankings().filter(r => r.name !== entry.name);
     all.push({ ...entry, createdAt: new Date().toISOString() });
     localStorage.setItem(LS_KEY, JSON.stringify(all));
   }

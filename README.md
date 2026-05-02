@@ -39,7 +39,11 @@ service cloud.firestore {
                     && request.resource.data.name is string
                     && request.resource.data.name.size() > 0
                     && request.resource.data.name.size() <= 20;
-      allow update, delete: if false;
+      allow update: if request.resource.data.name == resource.data.name
+                    && request.resource.data.score is number
+                    && request.resource.data.score >= 0
+                    && request.resource.data.score <= 5000;
+      allow delete: if false;
     }
   }
 }
