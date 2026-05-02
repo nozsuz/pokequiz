@@ -28,13 +28,41 @@
   h1 {
     color: #e63946;
     font-size: 1.9em;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
     text-shadow: 3px 3px 0 #ffe066;
   }
+  .subtitle { color: #888; font-size: 0.9em; margin-bottom: 14px; }
   .lead { font-size: 1.1em; color: #444; margin: 12px 0; }
 
-  /* Filter section */
-  .filter-section { margin: 18px 0; text-align: left; }
+  /* Mode selector */
+  .mode-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 16px 0 8px;
+  }
+  .mode-card {
+    background: #f1f3f5;
+    border: 3px solid transparent;
+    border-radius: 16px;
+    padding: 14px 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    font-weight: bold;
+    color: #444;
+  }
+  .mode-card:hover { border-color: #4dabf7; }
+  .mode-card.active {
+    background: linear-gradient(135deg, #ffe066, #ffd43b);
+    border-color: #f59f00;
+    color: #333;
+  }
+  .mode-card .mode-title { font-size: 1.15em; margin-bottom: 4px; }
+  .mode-card .mode-desc { font-size: 0.8em; font-weight: normal; color: #555; }
+
+  /* Filters */
+  .filter-section { margin: 16px 0; text-align: left; }
   .filter-title {
     font-weight: bold;
     margin-bottom: 8px;
@@ -69,17 +97,30 @@
     border-color: #495057;
   }
 
-  /* Quiz */
+  /* Quiz screen */
   .progress {
     color: #555;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     font-size: 1.05em;
     font-weight: bold;
   }
+  .timer-bar {
+    width: 100%;
+    height: 14px;
+    background: #e9ecef;
+    border-radius: 7px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .timer-fill {
+    height: 100%;
+    width: 100%;
+    background: #51cf66;
+  }
   .pokemon-image-wrap {
-    width: 260px;
-    height: 260px;
-    margin: 0 auto 18px;
+    width: 240px;
+    height: 240px;
+    margin: 0 auto 14px;
     background: radial-gradient(circle, #e7f5ff 0%, #d0ebff 100%);
     border-radius: 50%;
     display: flex;
@@ -96,7 +137,7 @@
   .choices {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 12px;
   }
   .choice {
@@ -104,14 +145,14 @@
     color: white;
     border: none;
     border-radius: 14px;
-    padding: 16px 8px;
-    font-size: 1.15em;
+    padding: 14px 6px;
+    font-size: 1.1em;
     font-weight: bold;
     cursor: pointer;
     transition: transform 0.15s, box-shadow 0.15s;
     font-family: inherit;
     box-shadow: 0 4px 0 #1c7ed6;
-    min-height: 60px;
+    min-height: 56px;
   }
   .choice:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 0 #1c7ed6; }
   .choice:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #1c7ed6; }
@@ -126,21 +167,24 @@
     50% { transform: translateY(-12px); }
   }
   .feedback {
-    font-size: 1.35em;
+    font-size: 1.3em;
     font-weight: bold;
-    margin: 14px 0;
+    margin: 12px 0;
     min-height: 1.5em;
     color: #333;
   }
   .feedback.correct { color: #2f9e44; }
   .feedback.wrong { color: #c92a2a; }
+
+  /* Buttons */
+  .btn-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 8px; }
   .next-btn, .start-btn, .secondary-btn {
     background: #ffd43b;
     color: #333;
     border: none;
     border-radius: 14px;
-    padding: 14px 32px;
-    font-size: 1.15em;
+    padding: 14px 24px;
+    font-size: 1.1em;
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 4px 0 #f59f00;
@@ -148,7 +192,7 @@
     transition: transform 0.15s, box-shadow 0.15s;
     margin: 4px;
   }
-  .start-btn { padding: 16px 40px; font-size: 1.25em; }
+  .start-btn { padding: 16px 36px; font-size: 1.2em; }
   .next-btn:hover, .start-btn:hover, .secondary-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 0 #f59f00;
@@ -160,14 +204,66 @@
     border: 2px solid #adb5bd;
   }
   .secondary-btn:hover { box-shadow: 0 6px 0 #adb5bd; }
+
+  /* Result + leaderboard */
   .loading { font-size: 1.3em; color: #666; padding: 40px 0; }
-  .score-big { font-size: 1.8em; color: #e63946; margin: 16px 0; font-weight: bold; }
-  .stars { font-size: 2.2em; color: #ffd43b; margin: 10px 0; letter-spacing: 6px; }
+  .score-big { font-size: 1.8em; color: #e63946; margin: 14px 0; font-weight: bold; }
+  .stars { font-size: 2.2em; color: #ffd43b; margin: 8px 0; letter-spacing: 6px; }
   .summary { color: #666; margin: 8px 0; font-size: 0.95em; }
+  .name-input {
+    width: 80%;
+    max-width: 300px;
+    padding: 12px 16px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    font-size: 1.2em;
+    font-family: inherit;
+    text-align: center;
+    margin: 8px 0;
+  }
+  .name-input:focus { outline: none; border-color: #4dabf7; }
+  .leaderboard {
+    text-align: left;
+    margin: 16px 0;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 2px solid #f1f3f5;
+    border-radius: 14px;
+    padding: 8px;
+  }
+  .lb-row {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    border-bottom: 1px solid #f1f3f5;
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-row.me { background: #fff9db; border-radius: 8px; }
+  .lb-rank { font-weight: bold; color: #868e96; text-align: center; }
+  .lb-rank.gold { color: #f59f00; font-size: 1.2em; }
+  .lb-rank.silver { color: #adb5bd; font-size: 1.1em; }
+  .lb-rank.bronze { color: #cd7f32; font-size: 1.05em; }
+  .lb-name { font-weight: bold; color: #333; }
+  .lb-meta { font-size: 0.75em; color: #888; }
+  .lb-score { font-weight: bold; color: #e63946; font-size: 1.1em; }
+  .lb-empty { color: #888; padding: 24px; text-align: center; }
+  .db-tag {
+    display: inline-block;
+    font-size: 0.75em;
+    color: #555;
+    background: #f1f3f5;
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin: 4px 2px;
+  }
+  .db-tag.online { background: #d3f9d8; color: #2f9e44; }
+
   @media (max-width: 480px) {
     h1 { font-size: 1.5em; }
-    .pokemon-image-wrap { width: 220px; height: 220px; }
-    .choice { font-size: 1em; padding: 14px 4px; }
+    .pokemon-image-wrap { width: 200px; height: 200px; }
+    .choice { font-size: 0.95em; padding: 12px 4px; }
     .pill { font-size: 0.85em; padding: 6px 11px; }
   }
 </style>
@@ -175,24 +271,35 @@
 <body>
 <div class="container">
   <h1>ポケモンクイズ</h1>
+  <div class="subtitle">かげで うつる ポケモンの なまえを あてよう！</div>
   <div id="content"></div>
 </div>
 
-<script>
-const TOTAL_QUESTIONS = 10;
-const POOL_SIZE = 20;
+<script src="firebase-config.js"></script>
+<script type="module">
+// =====================================================================
+// Constants
+// =====================================================================
+const NORMAL_QUESTIONS = 10;
+const NORMAL_POOL_SIZE = 20;
+const RANKING_TIME_MS = 5000;
+const RANKING_INITIAL_POOL = 24;
+const RANKING_REFILL_AMOUNT = 16;
+const RANKING_REFILL_THRESHOLD = 8;
 const MAX_POKEMON_ID = 1025;
+const NAME_MAX_LENGTH = 10;
+const LEADERBOARD_LIMIT = 20;
 
 const GENERATIONS = [
-  { id: 1, name: 'だい1せだい・カントー', range: [1, 151] },
-  { id: 2, name: 'だい2せだい・ジョウト', range: [152, 251] },
-  { id: 3, name: 'だい3せだい・ホウエン', range: [252, 386] },
-  { id: 4, name: 'だい4せだい・シンオウ', range: [387, 493] },
-  { id: 5, name: 'だい5せだい・イッシュ', range: [494, 649] },
-  { id: 6, name: 'だい6せだい・カロス', range: [650, 721] },
-  { id: 7, name: 'だい7せだい・アローラ', range: [722, 809] },
-  { id: 8, name: 'だい8せだい・ガラル', range: [810, 905] },
-  { id: 9, name: 'だい9せだい・パルデア', range: [906, 1025] }
+  { id: 1, name: 'だい1せだい・カントー',  range: [1, 151] },
+  { id: 2, name: 'だい2せだい・ジョウト',  range: [152, 251] },
+  { id: 3, name: 'だい3せだい・ホウエン',  range: [252, 386] },
+  { id: 4, name: 'だい4せだい・シンオウ',  range: [387, 493] },
+  { id: 5, name: 'だい5せだい・イッシュ',  range: [494, 649] },
+  { id: 6, name: 'だい6せだい・カロス',    range: [650, 721] },
+  { id: 7, name: 'だい7せだい・アローラ',  range: [722, 809] },
+  { id: 8, name: 'だい8せだい・ガラル',    range: [810, 905] },
+  { id: 9, name: 'だい9せだい・パルデア',  range: [906, 1025] }
 ];
 
 const TYPES = [
@@ -216,16 +323,98 @@ const TYPES = [
   { id: 'fairy',    name: 'フェアリー', color: '#EE99AC' }
 ];
 
+// =====================================================================
+// DB layer (Firestore + localStorage fallback)
+// =====================================================================
+const fbConfig = window.FIREBASE_CONFIG;
+const useFirestore = !!(fbConfig && fbConfig.apiKey && fbConfig.apiKey.length > 0);
+const LS_KEY = 'pokequiz_rankings_v1';
+const NAME_LS_KEY = 'pokequiz_last_name';
+
+let firestoreReady = useFirestore ? initFirestore() : Promise.resolve(null);
+let backendLabel = useFirestore ? '🌐 オンライン' : '💾 ローカル';
+
+async function initFirestore() {
+  try {
+    const [{ initializeApp }, fs] = await Promise.all([
+      import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js')
+    ]);
+    const app = initializeApp(fbConfig);
+    const db = fs.getFirestore(app);
+    return { db, ...fs };
+  } catch (e) {
+    console.warn('Firestore の初期化に失敗、localStorage にフォールバックします', e);
+    backendLabel = '💾 ローカル (Firestore 失敗)';
+    return null;
+  }
+}
+
+async function submitScore(entry) {
+  const api = await firestoreReady;
+  if (api) {
+    await api.addDoc(api.collection(api.db, 'rankings'), {
+      ...entry,
+      createdAt: api.serverTimestamp()
+    });
+  } else {
+    const all = readLocalRankings();
+    all.push({ ...entry, createdAt: new Date().toISOString() });
+    localStorage.setItem(LS_KEY, JSON.stringify(all));
+  }
+}
+
+async function fetchTopRankings(n = LEADERBOARD_LIMIT) {
+  const api = await firestoreReady;
+  if (api) {
+    const q = api.query(
+      api.collection(api.db, 'rankings'),
+      api.orderBy('score', 'desc'),
+      api.limit(n)
+    );
+    const snap = await api.getDocs(q);
+    return snap.docs.map(d => {
+      const data = d.data();
+      const t = data.createdAt;
+      return { ...data, createdAt: t && t.toDate ? t.toDate().toISOString() : t };
+    });
+  } else {
+    return readLocalRankings()
+      .slice()
+      .sort((a, b) => b.score - a.score)
+      .slice(0, n);
+  }
+}
+
+function readLocalRankings() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); }
+  catch { return []; }
+}
+
+// =====================================================================
+// State
+// =====================================================================
+let mode = 'normal';
+let selectedGens = new Set();
+let selectedTypes = new Set();
 const typeIdCache = new Map();
 
-let selectedGens = new Set();   // empty = all
-let selectedTypes = new Set();  // empty = all
 let questions = [];
 let currentIndex = 0;
 let score = 0;
+let timerHandle = null;
+let lockChoices = false;
+
+let rankPool = [];
+let rankCandidateIds = [];
+let rankUsedCorrect = new Set();
+let rankRefilling = false;
 
 const content = document.getElementById('content');
 
+// =====================================================================
+// Utilities
+// =====================================================================
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -235,58 +424,34 @@ function shuffle(arr) {
   return a;
 }
 
-function showSettings() {
-  const allGensActive = selectedGens.size === 0;
-  const allTypesActive = selectedTypes.size === 0;
-
-  const typePillStyle = (t) => selectedTypes.has(t.id)
-    ? `background:${t.color};color:white;border-color:${t.color};`
-    : '';
-
-  content.innerHTML = `
-    <p class="lead">かげで うつる ポケモンの<br>なまえを あてよう！</p>
-
-    <div class="filter-section">
-      <div class="filter-title">📍 せだい・ちほう</div>
-      <div class="filter-pills">
-        <button class="pill all-pill ${allGensActive ? 'active' : ''}" onclick="clearGens()">ぜんぶ</button>
-        ${GENERATIONS.map(g => `
-          <button class="pill ${selectedGens.has(g.id) ? 'active' : ''}" onclick="toggleGen(${g.id})">${g.name}</button>
-        `).join('')}
-      </div>
-    </div>
-
-    <div class="filter-section">
-      <div class="filter-title">⚡ タイプ</div>
-      <div class="filter-pills">
-        <button class="pill all-pill ${allTypesActive ? 'active' : ''}" onclick="clearTypes()">ぜんぶ</button>
-        ${TYPES.map(t => `
-          <button class="pill ${selectedTypes.has(t.id) ? 'active' : ''}" style="${typePillStyle(t)}" onclick="toggleType('${t.id}')">${t.name}</button>
-        `).join('')}
-      </div>
-    </div>
-
-    <div class="summary">${describeSelection()}</div>
-    <button class="start-btn" onclick="startQuiz()">スタート！</button>
-  `;
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])
+  );
 }
 
-function describeSelection() {
-  const gen = selectedGens.size === 0 ? 'すべての せだい' : `${selectedGens.size}つの せだい`;
-  const typ = selectedTypes.size === 0 ? 'すべての タイプ' : `${selectedTypes.size}つの タイプ`;
-  return `たいしょう: ${gen} × ${typ}`;
+function clearTimer() {
+  if (timerHandle) {
+    clearTimeout(timerHandle);
+    timerHandle = null;
+  }
 }
 
-function toggleGen(id) {
-  if (selectedGens.has(id)) selectedGens.delete(id); else selectedGens.add(id);
-  showSettings();
+// =====================================================================
+// PokeAPI
+// =====================================================================
+async function fetchPokemon(id) {
+  const [pokemon, species] = await Promise.all([
+    fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(r => r.json()),
+    fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`).then(r => r.json())
+  ]);
+  const jaEntry = species.names.find(n => n.language.name === 'ja-Hrkt')
+              || species.names.find(n => n.language.name === 'ja');
+  const name = jaEntry ? jaEntry.name : pokemon.name;
+  const art = pokemon.sprites.other && pokemon.sprites.other['official-artwork'];
+  const image = (art && art.front_default) || pokemon.sprites.front_default;
+  return { id, name, image };
 }
-function clearGens() { selectedGens.clear(); showSettings(); }
-function toggleType(id) {
-  if (selectedTypes.has(id)) selectedTypes.delete(id); else selectedTypes.add(id);
-  showSettings();
-}
-function clearTypes() { selectedTypes.clear(); showSettings(); }
 
 async function fetchTypePokemonIds(typeId) {
   if (typeIdCache.has(typeId)) return typeIdCache.get(typeId);
@@ -302,7 +467,6 @@ async function fetchTypePokemonIds(typeId) {
 }
 
 async function buildCandidatePool() {
-  // Generation/region filter
   let candidates;
   if (selectedGens.size === 0) {
     candidates = new Set();
@@ -314,7 +478,6 @@ async function buildCandidatePool() {
       for (let i = gen.range[0]; i <= gen.range[1]; i++) candidates.add(i);
     }
   }
-  // Type filter (union of selected types)
   if (selectedTypes.size > 0) {
     const lists = await Promise.all([...selectedTypes].map(fetchTypePokemonIds));
     const typeIds = new Set(lists.flat());
@@ -323,56 +486,117 @@ async function buildCandidatePool() {
   return [...candidates];
 }
 
-async function fetchPokemon(id) {
-  const [pokemon, species] = await Promise.all([
-    fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then(r => r.json()),
-    fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`).then(r => r.json())
-  ]);
-  const jaEntry = species.names.find(n => n.language.name === 'ja-Hrkt')
-              || species.names.find(n => n.language.name === 'ja');
-  const name = jaEntry ? jaEntry.name : pokemon.name;
-  const art = pokemon.sprites.other && pokemon.sprites.other['official-artwork'];
-  const image = (art && art.front_default) || pokemon.sprites.front_default;
-  return { id, name, image };
+// =====================================================================
+// Home / settings screen
+// =====================================================================
+function showHome() {
+  clearTimer();
+  lockChoices = false;
+  const allGensActive = selectedGens.size === 0;
+  const allTypesActive = selectedTypes.size === 0;
+  const typePillStyle = (t) => selectedTypes.has(t.id)
+    ? `background:${t.color};color:white;border-color:${t.color};`
+    : '';
+
+  content.innerHTML = `
+    <div class="mode-row">
+      <button class="mode-card ${mode === 'normal' ? 'active' : ''}" data-mode="normal">
+        <div class="mode-title">📘 ふつうモード</div>
+        <div class="mode-desc">10もん で けっか</div>
+      </button>
+      <button class="mode-card ${mode === 'ranking' ? 'active' : ''}" data-mode="ranking">
+        <div class="mode-title">🏆 ランキングモード</div>
+        <div class="mode-desc">5びょう／もん・むげん</div>
+      </button>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">📍 せだい・ちほう</div>
+      <div class="filter-pills">
+        <button class="pill all-pill ${allGensActive ? 'active' : ''}" data-action="clear-gens">ぜんぶ</button>
+        ${GENERATIONS.map(g => `
+          <button class="pill ${selectedGens.has(g.id) ? 'active' : ''}" data-toggle-gen="${g.id}">${g.name}</button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <div class="filter-title">⚡ タイプ</div>
+      <div class="filter-pills">
+        <button class="pill all-pill ${allTypesActive ? 'active' : ''}" data-action="clear-types">ぜんぶ</button>
+        ${TYPES.map(t => `
+          <button class="pill ${selectedTypes.has(t.id) ? 'active' : ''}" style="${typePillStyle(t)}" data-toggle-type="${t.id}">${t.name}</button>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="summary">${describeSelection()}</div>
+    <div class="btn-row">
+      <button class="start-btn" data-action="start">スタート！</button>
+      <button class="secondary-btn" data-action="leaderboard">🏆 ランキングをみる</button>
+    </div>
+    <div class="summary"><span class="db-tag ${useFirestore ? 'online' : ''}">${backendLabel}</span></div>
+  `;
+
+  content.querySelectorAll('[data-mode]').forEach(b => b.addEventListener('click', () => {
+    mode = b.dataset.mode; showHome();
+  }));
+  content.querySelectorAll('[data-toggle-gen]').forEach(b => b.addEventListener('click', () => {
+    const id = parseInt(b.dataset.toggleGen, 10);
+    if (selectedGens.has(id)) selectedGens.delete(id); else selectedGens.add(id);
+    showHome();
+  }));
+  content.querySelectorAll('[data-toggle-type]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.toggleType;
+    if (selectedTypes.has(id)) selectedTypes.delete(id); else selectedTypes.add(id);
+    showHome();
+  }));
+  content.querySelector('[data-action="clear-gens"]').addEventListener('click', () => { selectedGens.clear(); showHome(); });
+  content.querySelector('[data-action="clear-types"]').addEventListener('click', () => { selectedTypes.clear(); showHome(); });
+  content.querySelector('[data-action="start"]').addEventListener('click', () => {
+    if (mode === 'normal') startNormalQuiz();
+    else startRankingQuiz();
+  });
+  content.querySelector('[data-action="leaderboard"]').addEventListener('click', () => showLeaderboard());
 }
 
-async function startQuiz() {
+function describeSelection() {
+  const gen = selectedGens.size === 0 ? 'すべての せだい' : `${selectedGens.size}つの せだい`;
+  const typ = selectedTypes.size === 0 ? 'すべての タイプ' : `${selectedTypes.size}つの タイプ`;
+  return `たいしょう: ${gen} × ${typ}`;
+}
+
+// =====================================================================
+// Normal mode
+// =====================================================================
+async function startNormalQuiz() {
   content.innerHTML = '<div class="loading">よみこみちゅう... ⏳</div>';
   try {
     const candidates = await buildCandidatePool();
-    if (candidates.length < 4) {
-      content.innerHTML = `
-        <div class="lead">えらんだ じょうけんに あう ポケモンが すくないよ。<br>べつの じょうけんを えらんでね！</div>
-        <button class="start-btn" onclick="showSettings()">せっていに もどる</button>`;
-      return;
-    }
+    if (candidates.length < 4) return showFilterError();
 
-    const pickedIds = shuffle(candidates).slice(0, Math.min(POOL_SIZE, candidates.length));
-    const pool = await Promise.all(pickedIds.map(fetchPokemon));
-    const valid = pool.filter(p => p.image);
-    if (valid.length < 4) throw new Error('not enough pokemon with images');
+    const pickedIds = shuffle(candidates).slice(0, Math.min(NORMAL_POOL_SIZE, candidates.length));
+    const pool = (await Promise.all(pickedIds.map(fetchPokemon))).filter(p => p.image);
+    if (pool.length < 4) throw new Error('not enough pokemon with images');
 
     questions = [];
-    const shuffled = shuffle(valid);
-    const n = Math.min(TOTAL_QUESTIONS, shuffled.length);
+    const shuffled = shuffle(pool);
+    const n = Math.min(NORMAL_QUESTIONS, shuffled.length);
     for (let i = 0; i < n; i++) {
       const correct = shuffled[i];
-      const wrongs = shuffle(valid.filter(p => p.id !== correct.id)).slice(0, 3);
-      const choices = shuffle([correct, ...wrongs]);
-      questions.push({ correct, choices });
+      const wrongs = shuffle(pool.filter(p => p.id !== correct.id)).slice(0, 3);
+      questions.push({ correct, choices: shuffle([correct, ...wrongs]) });
     }
     currentIndex = 0;
     score = 0;
-    showQuestion();
+    showNormalQuestion();
   } catch (e) {
-    console.error(e);
-    content.innerHTML = `
-      <div class="lead">エラーが おきました。<br>インターネットを たしかめてね。</div>
-      <button class="start-btn" onclick="showSettings()">せっていに もどる</button>`;
+    showError(e);
   }
 }
 
-function showQuestion() {
+function showNormalQuestion() {
+  lockChoices = false;
   const q = questions[currentIndex];
   content.innerHTML = `
     <div class="progress">だい ${currentIndex + 1} もん / ${questions.length} もん　★ ${score} てん</div>
@@ -382,23 +606,23 @@ function showQuestion() {
     <div class="feedback" id="feedback">このポケモンは だれ?</div>
     <div class="choices" id="choices">
       ${q.choices.map(c => `
-        <button class="choice" data-id="${c.id}" onclick="answer(${c.id})">${c.name}</button>
+        <button class="choice" data-id="${c.id}">${escapeHtml(c.name)}</button>
       `).join('')}
     </div>
   `;
+  content.querySelectorAll('.choice').forEach(btn => {
+    btn.addEventListener('click', () => answerNormal(parseInt(btn.dataset.id, 10)));
+  });
 }
 
-function answer(chosenId) {
+function answerNormal(chosenId) {
+  if (lockChoices) return;
+  lockChoices = true;
   const q = questions[currentIndex];
   const correctId = q.correct.id;
   const isCorrect = chosenId === correctId;
 
-  document.querySelectorAll('.choice').forEach(btn => {
-    btn.disabled = true;
-    const id = parseInt(btn.dataset.id, 10);
-    if (id === correctId) btn.classList.add('correct');
-    else if (id === chosenId) btn.classList.add('wrong');
-  });
+  applyAnswerStyles(chosenId, correctId);
   document.getElementById('poke-img').classList.remove('silhouette');
 
   const feedback = document.getElementById('feedback');
@@ -413,21 +637,30 @@ function answer(chosenId) {
 
   setTimeout(() => {
     const choicesDiv = document.getElementById('choices');
+    if (!choicesDiv) return;
     const isLast = currentIndex + 1 >= questions.length;
     choicesDiv.innerHTML = `
-      <button class="next-btn" style="grid-column: 1 / -1;" onclick="next()">
+      <button class="next-btn" style="grid-column: 1 / -1;" id="next-btn">
         ${isLast ? 'けっかを みる →' : 'つぎの もんだい →'}
       </button>`;
+    document.getElementById('next-btn').addEventListener('click', () => {
+      currentIndex++;
+      if (currentIndex < questions.length) showNormalQuestion();
+      else showNormalResult();
+    });
   }, 1100);
 }
 
-function next() {
-  currentIndex++;
-  if (currentIndex < questions.length) showQuestion();
-  else showResult();
+function applyAnswerStyles(chosenId, correctId) {
+  document.querySelectorAll('.choice').forEach(btn => {
+    btn.disabled = true;
+    const id = parseInt(btn.dataset.id, 10);
+    if (id === correctId) btn.classList.add('correct');
+    else if (id === chosenId) btn.classList.add('wrong');
+  });
 }
 
-function showResult() {
+function showNormalResult() {
   const total = questions.length;
   let message;
   if (score === total) message = 'パーフェクト！ ポケモンマスターだ！';
@@ -444,14 +677,271 @@ function showResult() {
     <div class="stars">${stars}</div>
     <div class="score-big">${score} / ${total} てん</div>
     <div class="feedback correct">${message}</div>
-    <div>
-      <button class="start-btn" onclick="startQuiz()">おなじ せっていで もういちど</button>
-      <button class="secondary-btn" onclick="showSettings()">せっていを かえる</button>
+    <div class="btn-row">
+      <button class="start-btn" id="again-btn">おなじ せっていで もういちど</button>
+      <button class="secondary-btn" id="home-btn">ホームに もどる</button>
     </div>
   `;
+  document.getElementById('again-btn').addEventListener('click', startNormalQuiz);
+  document.getElementById('home-btn').addEventListener('click', showHome);
 }
 
-showSettings();
+// =====================================================================
+// Ranking mode
+// =====================================================================
+async function startRankingQuiz() {
+  content.innerHTML = '<div class="loading">よみこみちゅう... ⏳</div>';
+  try {
+    rankCandidateIds = await buildCandidatePool();
+    if (rankCandidateIds.length < 4) return showFilterError();
+
+    rankPool = [];
+    rankUsedCorrect = new Set();
+    rankRefilling = false;
+    score = 0;
+    currentIndex = 0;
+
+    await refillRankingPool(RANKING_INITIAL_POOL);
+    if (rankPool.length < 4) throw new Error('not enough pokemon with images');
+
+    showRankingQuestion();
+  } catch (e) {
+    showError(e);
+  }
+}
+
+async function refillRankingPool(amount) {
+  if (rankRefilling) return;
+  rankRefilling = true;
+  try {
+    const inPool = new Set(rankPool.map(p => p.id));
+    const available = rankCandidateIds.filter(id => !inPool.has(id) && !rankUsedCorrect.has(id));
+    if (available.length === 0) return;
+    const toFetch = shuffle(available).slice(0, Math.min(amount, available.length));
+    const fetched = await Promise.all(toFetch.map(fetchPokemon));
+    for (const p of fetched) if (p.image) rankPool.push(p);
+  } finally {
+    rankRefilling = false;
+  }
+}
+
+function pickNextRankingQuestion() {
+  const candidates = rankPool.filter(p => !rankUsedCorrect.has(p.id));
+  if (candidates.length === 0 || rankPool.length < 4) return null;
+  const correct = candidates[Math.floor(Math.random() * candidates.length)];
+  rankUsedCorrect.add(correct.id);
+  const wrongs = shuffle(rankPool.filter(p => p.id !== correct.id)).slice(0, 3);
+  if (wrongs.length < 3) return null;
+  return { correct, choices: shuffle([correct, ...wrongs]) };
+}
+
+async function showRankingQuestion() {
+  lockChoices = false;
+  clearTimer();
+
+  const unused = rankPool.filter(p => !rankUsedCorrect.has(p.id)).length;
+  if (unused < RANKING_REFILL_THRESHOLD && !rankRefilling) {
+    refillRankingPool(RANKING_REFILL_AMOUNT);
+  }
+
+  let q = pickNextRankingQuestion();
+  if (!q) {
+    await refillRankingPool(RANKING_REFILL_AMOUNT);
+    q = pickNextRankingQuestion();
+    if (!q) return rankingExhausted();
+  }
+
+  currentIndex++;
+  content.innerHTML = `
+    <div class="progress">だい ${currentIndex} もん　★ ${score} てん</div>
+    <div class="timer-bar"><div class="timer-fill" id="timer-fill"></div></div>
+    <div class="pokemon-image-wrap">
+      <img class="pokemon-image silhouette" src="${q.correct.image}" id="poke-img" alt="?">
+    </div>
+    <div class="feedback" id="feedback">5びょう いない！</div>
+    <div class="choices" id="choices">
+      ${q.choices.map(c => `
+        <button class="choice" data-id="${c.id}">${escapeHtml(c.name)}</button>
+      `).join('')}
+    </div>
+  `;
+  content.querySelectorAll('.choice').forEach(btn => {
+    btn.addEventListener('click', () => answerRanking(parseInt(btn.dataset.id, 10), q));
+  });
+
+  const fill = document.getElementById('timer-fill');
+  fill.style.transition = 'none';
+  fill.style.width = '100%';
+  fill.style.background = '#51cf66';
+  void fill.offsetWidth;
+  fill.style.transition = `width ${RANKING_TIME_MS}ms linear, background-color 0.8s`;
+  requestAnimationFrame(() => { fill.style.width = '0%'; });
+  setTimeout(() => {
+    const f = document.getElementById('timer-fill');
+    if (f && !lockChoices) f.style.background = '#ff6b6b';
+  }, RANKING_TIME_MS * 0.7);
+
+  timerHandle = setTimeout(() => onRankingTimeout(q), RANKING_TIME_MS);
+}
+
+function answerRanking(chosenId, q) {
+  if (lockChoices) return;
+  lockChoices = true;
+  clearTimer();
+
+  const correctId = q.correct.id;
+  const isCorrect = chosenId === correctId;
+  applyAnswerStyles(chosenId, correctId);
+  document.getElementById('poke-img').classList.remove('silhouette');
+  const feedback = document.getElementById('feedback');
+
+  if (isCorrect) {
+    score++;
+    feedback.textContent = `せいかい！ ${q.correct.name}！🎉`;
+    feedback.className = 'feedback correct';
+    setTimeout(() => showRankingQuestion(), 600);
+  } else {
+    feedback.textContent = `ざんねん... こたえは ${q.correct.name}`;
+    feedback.className = 'feedback wrong';
+    setTimeout(() => showRankingGameOver('まちがえちゃった！'), 1500);
+  }
+}
+
+function onRankingTimeout(q) {
+  if (lockChoices) return;
+  lockChoices = true;
+  applyAnswerStyles(-1, q.correct.id);
+  document.getElementById('poke-img').classList.remove('silhouette');
+  const feedback = document.getElementById('feedback');
+  feedback.textContent = `じかんぎれ！ こたえは ${q.correct.name}`;
+  feedback.className = 'feedback wrong';
+  setTimeout(() => showRankingGameOver('じかんぎれ！'), 1500);
+}
+
+function rankingExhausted() {
+  showRankingGameOver('すべての ポケモンを こたえたよ！🎊');
+}
+
+function showRankingGameOver(reason) {
+  clearTimer();
+  const filtersText = describeSelection();
+  const lastName = localStorage.getItem(NAME_LS_KEY) || '';
+  content.innerHTML = `
+    <div class="score-big">ゲームオーバー</div>
+    <div class="lead">${escapeHtml(reason)}</div>
+    <div class="score-big">スコア: ${score} もん せいかい</div>
+    <div class="summary">${escapeHtml(filtersText)}</div>
+    <div class="lead">なまえを いれて とうろくしよう！</div>
+    <input class="name-input" id="name-input" maxlength="${NAME_MAX_LENGTH}" placeholder="なまえ" value="${escapeHtml(lastName)}">
+    <div class="btn-row">
+      <button class="start-btn" id="submit-btn">とうろくする</button>
+      <button class="secondary-btn" id="skip-btn">とうろく しないで ホームへ</button>
+    </div>
+    <div class="summary"><span class="db-tag ${useFirestore ? 'online' : ''}">${backendLabel}</span></div>
+  `;
+  const input = document.getElementById('name-input');
+  input.focus();
+  input.select();
+
+  document.getElementById('submit-btn').addEventListener('click', async () => {
+    const name = input.value.trim();
+    if (!name) { input.focus(); input.style.borderColor = '#ff6b6b'; return; }
+    localStorage.setItem(NAME_LS_KEY, name);
+    const entry = {
+      name: name.slice(0, NAME_MAX_LENGTH),
+      score,
+      mode: 'ranking',
+      gens: [...selectedGens],
+      types: [...selectedTypes]
+    };
+    content.innerHTML = '<div class="loading">とうろく ちゅう... ⏳</div>';
+    try {
+      await submitScore(entry);
+      showLeaderboard(entry);
+    } catch (e) {
+      console.error(e);
+      content.innerHTML = `
+        <div class="lead">とうろくに しっぱい しちゃった...</div>
+        <button class="secondary-btn" id="back-btn">ホームに もどる</button>`;
+      document.getElementById('back-btn').addEventListener('click', showHome);
+    }
+  });
+  document.getElementById('skip-btn').addEventListener('click', showHome);
+}
+
+// =====================================================================
+// Leaderboard
+// =====================================================================
+async function showLeaderboard(highlightEntry) {
+  content.innerHTML = '<div class="loading">よみこみちゅう... ⏳</div>';
+  let rows;
+  try { rows = await fetchTopRankings(LEADERBOARD_LIMIT); }
+  catch (e) {
+    console.error(e);
+    return showError(e);
+  }
+
+  const list = rows.length === 0
+    ? '<div class="lb-empty">まだ きろくが ないよ。<br>ランキングモードで あそんでね！</div>'
+    : rows.map((r, i) => {
+        const rank = i + 1;
+        const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
+        const isMe = highlightEntry &&
+                     highlightEntry.name === r.name &&
+                     highlightEntry.score === r.score;
+        const filterText = describeFiltersFromEntry(r);
+        return `
+          <div class="lb-row ${isMe ? 'me' : ''}">
+            <div class="lb-rank ${rankClass}">${rank}</div>
+            <div>
+              <div class="lb-name">${escapeHtml(r.name || 'なまなし')}</div>
+              <div class="lb-meta">${escapeHtml(filterText)}</div>
+            </div>
+            <div class="lb-score">${r.score}</div>
+          </div>`;
+      }).join('');
+
+  content.innerHTML = `
+    <div class="score-big">🏆 ランキング TOP ${LEADERBOARD_LIMIT}</div>
+    <div class="leaderboard">${list}</div>
+    <div class="btn-row">
+      <button class="start-btn" id="back-home">ホームに もどる</button>
+    </div>
+    <div class="summary"><span class="db-tag ${useFirestore ? 'online' : ''}">${backendLabel}</span></div>
+  `;
+  document.getElementById('back-home').addEventListener('click', showHome);
+}
+
+function describeFiltersFromEntry(entry) {
+  const gens = Array.isArray(entry.gens) ? entry.gens : [];
+  const types = Array.isArray(entry.types) ? entry.types : [];
+  const genTxt = gens.length === 0 ? 'ぜんせだい' : `せだい ${gens.length}`;
+  const typTxt = types.length === 0 ? 'ぜんタイプ' : `タイプ ${types.length}`;
+  return `${genTxt} × ${typTxt}`;
+}
+
+// =====================================================================
+// Errors
+// =====================================================================
+function showFilterError() {
+  content.innerHTML = `
+    <div class="lead">えらんだ じょうけんに あう ポケモンが すくないよ。<br>べつの じょうけんを えらんでね！</div>
+    <button class="start-btn" id="back-btn">せっていに もどる</button>`;
+  document.getElementById('back-btn').addEventListener('click', showHome);
+}
+
+function showError(e) {
+  console.error(e);
+  content.innerHTML = `
+    <div class="lead">エラーが おきました。<br>インターネットを たしかめてね。</div>
+    <button class="start-btn" id="back-btn">ホームに もどる</button>`;
+  document.getElementById('back-btn').addEventListener('click', showHome);
+}
+
+// =====================================================================
+// Boot
+// =====================================================================
+showHome();
 </script>
 </body>
 </html>
