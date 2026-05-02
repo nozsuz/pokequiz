@@ -361,13 +361,30 @@ async function submitScore(entry) {
     const data = { ...entry, createdAt: api.serverTimestamp() };
     if (existing.empty) {
       await api.addDoc(api.collection(api.db, 'rankings'), data);
-    } else {
-      await api.updateDoc(existing.docs[0].ref, data);
+      return { result: 'created', previousScore: null };
     }
+    const prev = existing.docs[0];
+    const prevScore = prev.data().score || 0;
+    if (entry.score > prevScore) {
+      await api.updateDoc(prev.ref, data);
+      return { result: 'updated', previousScore: prevScore };
+    }
+    return { result: 'kept', previousScore: prevScore };
   } else {
-    const all = readLocalRankings().filter(r => r.name !== entry.name);
-    all.push({ ...entry, createdAt: new Date().toISOString() });
-    localStorage.setItem(LS_KEY, JSON.stringify(all));
+    const all = readLocalRankings();
+    const prev = all.find(r => r.name === entry.name);
+    if (!prev) {
+      all.push({ ...entry, createdAt: new Date().toISOString() });
+      localStorage.setItem(LS_KEY, JSON.stringify(all));
+      return { result: 'created', previousScore: null };
+    }
+    if (entry.score > prev.score) {
+      const filtered = all.filter(r => r.name !== entry.name);
+      filtered.push({ ...entry, createdAt: new Date().toISOString() });
+      localStorage.setItem(LS_KEY, JSON.stringify(filtered));
+      return { result: 'updated', previousScore: prev.score };
+    }
+    return { result: 'kept', previousScore: prev.score };
   }
 }
 
@@ -863,8 +880,8 @@ function showRankingGameOver(reason) {
     };
     content.innerHTML = '<div class="loading">とうろく ちゅう... ⏳</div>';
     try {
-      await submitScore(entry);
-      showLeaderboard(entry);
+      const outcome = await submitScore(entry);
+      showLeaderboard(entry, outcome);
     } catch (e) {
       console.error(e);
       content.innerHTML = `
@@ -879,7 +896,7 @@ function showRankingGameOver(reason) {
 // =====================================================================
 // Leaderboard
 // =====================================================================
-async function showLeaderboard(highlightEntry) {
+async function showLeaderboard(highlightEntry, outcome) {
   content.innerHTML = '<div class="loading">よみこみちゅう... ⏳</div>';
   let rows;
   try { rows = await fetchTopRankings(LEADERBOARD_LIMIT); }
@@ -888,14 +905,23 @@ async function showLeaderboard(highlightEntry) {
     return showError(e);
   }
 
+  let banner = '';
+  if (outcome) {
+    if (outcome.result === 'created') {
+      banner = `<div class="feedback correct">はじめての とうろく！🎉</div>`;
+    } else if (outcome.result === 'updated') {
+      banner = `<div class="feedback correct">ハイスコア こうしん！ ${outcome.previousScore} → ${highlightEntry.score} 🎉</div>`;
+    } else if (outcome.result === 'kept') {
+      banner = `<div class="feedback">じぜんの ${outcome.previousScore} てんの ほうが たかかったよ。<br>ハイスコアは そのままだよ！</div>`;
+    }
+  }
+
   const list = rows.length === 0
     ? '<div class="lb-empty">まだ きろくが ないよ。<br>ランキングモードで あそんでね！</div>'
     : rows.map((r, i) => {
         const rank = i + 1;
         const rankClass = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
-        const isMe = highlightEntry &&
-                     highlightEntry.name === r.name &&
-                     highlightEntry.score === r.score;
+        const isMe = highlightEntry && highlightEntry.name === r.name;
         const filterText = describeFiltersFromEntry(r);
         return `
           <div class="lb-row ${isMe ? 'me' : ''}">
@@ -910,6 +936,7 @@ async function showLeaderboard(highlightEntry) {
 
   content.innerHTML = `
     <div class="score-big">🏆 ランキング TOP ${LEADERBOARD_LIMIT}</div>
+    ${banner}
     <div class="leaderboard">${list}</div>
     <div class="btn-row">
       <button class="start-btn" id="back-home">ホームに もどる</button>

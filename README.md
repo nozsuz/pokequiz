@@ -41,7 +41,7 @@ service cloud.firestore {
                     && request.resource.data.name.size() <= 20;
       allow update: if request.resource.data.name == resource.data.name
                     && request.resource.data.score is number
-                    && request.resource.data.score >= 0
+                    && request.resource.data.score > resource.data.score
                     && request.resource.data.score <= 5000;
       allow delete: if false;
     }
